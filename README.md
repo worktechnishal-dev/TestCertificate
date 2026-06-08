@@ -69,6 +69,29 @@ npm run dev
 - Frontend: `http://localhost:5173`
 - Backend API: `http://localhost:5000/api`
 
+## Production Deployment
+
+The app can be deployed as one Node web service. In production, Express serves the built React app from `client/dist` and keeps the API under `/api`.
+
+Use these settings on Render:
+
+```text
+Service type: Web Service
+Runtime: Node
+Build Command: npm run build
+Start Command: npm start
+```
+
+Set these environment variables:
+
+```text
+NODE_ENV=production
+MONGO_URI=<your MongoDB Atlas connection string>
+TC_PREFIX=MTC
+```
+
+Do not add local `.env` files to GitHub. Use the hosting provider's environment variable screen instead.
+
 ## Sample Data
 
 Seed data includes:

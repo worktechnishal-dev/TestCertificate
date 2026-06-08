@@ -1,6 +1,7 @@
 require("dotenv").config();
 const cors = require("cors");
 const express = require("express");
+const path = require("path");
 const connectDb = require("./config/db");
 
 const customerRoutes = require("./routes/customerRoutes");
@@ -37,6 +38,21 @@ app.get("/api/health", (req, res) => {
 app.use("/api/customers", customerRoutes);
 app.use("/api/products", productRoutes);
 app.use("/api/certificates", certificateRoutes);
+
+const clientDistPath = path.join(__dirname, "..", "client", "dist");
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(clientDistPath));
+
+  app.get("*", (req, res) => {
+    if (req.path.startsWith("/api")) {
+      res.status(404).json({ message: "Route not found" });
+      return;
+    }
+
+    res.sendFile(path.join(clientDistPath, "index.html"));
+  });
+}
 
 app.use((req, res) => {
   res.status(404).json({ message: "Route not found" });
