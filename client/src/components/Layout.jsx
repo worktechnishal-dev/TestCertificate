@@ -17,6 +17,7 @@ const Layout = ({ children }) => {
           <NavLink to="/certificates">Certificates</NavLink>
           <NavLink to="/masters">Customer Master</NavLink>
           <NavLink to="/product-master">Product Master</NavLink>
+          <NavLink to="/profile">Profile</NavLink>
         </nav>
         <div className="sidebar-user">
           <span>{user?.name}</span>

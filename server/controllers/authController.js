@@ -1,4 +1,5 @@
 const User = require("../models/User");
+const crypto = require("crypto");
 const { hashPassword, signToken, verifyPassword } = require("../utils/auth");
 
 const sanitizeUser = (user) => ({
@@ -69,8 +70,70 @@ const me = async (req, res) => {
   res.json({ user: sanitizeUser(req.user) });
 };
 
+const forgotPassword = async (req, res) => {
+  try {
+    const { email = "" } = req.body;
+    const user = await User.findOne({ email: email.trim().toLowerCase() });
+
+    if (!user) {
+      res.json({ message: "If the email exists, a reset link has been generated." });
+      return;
+    }
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpiresAt = new Date(Date.now() + 60 * 60 * 1000);
+    await user.save();
+
+    res.json({
+      message: "Password reset link generated.",
+      resetToken,
+      resetUrl: `/reset-password/${resetToken}`
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to create reset link", error: error.message });
+  }
+};
+
+const resetPassword = async (req, res) => {
+  try {
+    const { token = "", password = "" } = req.body;
+
+    if (!token || !password) {
+      res.status(400).json({ message: "Reset token and password are required" });
+      return;
+    }
+
+    if (password.length < 6) {
+      res.status(400).json({ message: "Password must be at least 6 characters" });
+      return;
+    }
+
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpiresAt: { $gt: new Date() }
+    });
+
+    if (!user) {
+      res.status(400).json({ message: "Reset link is invalid or expired" });
+      return;
+    }
+
+    user.passwordHash = hashPassword(password);
+    user.resetPasswordToken = "";
+    user.resetPasswordExpiresAt = null;
+    await user.save();
+
+    res.json({ message: "Password updated successfully. Please login." });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to reset password", error: error.message });
+  }
+};
+
 module.exports = {
+  forgotPassword,
   login,
   me,
-  register
+  register,
+  resetPassword
 };
