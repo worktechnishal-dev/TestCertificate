@@ -94,7 +94,7 @@ export const AuthProvider = ({ children }) => {
       loading,
       login: (values) => authenticate("/auth/login", values),
       logout,
-      register: (values) => authenticate("/auth/register", values),
+      register: (values) => api.post("/auth/register", values),
       token: session?.token,
       user: session?.user
     }),

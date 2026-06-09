@@ -8,6 +8,7 @@ const RegisterPage = () => {
   const [form, setForm] = useState({ name: "", email: "", password: "", remember: true });
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   if (user) {
     return <Navigate to="/" replace />;
@@ -20,7 +21,12 @@ const RegisterPage = () => {
 
     try {
       await register(form);
-      navigate("/", { replace: true });
+      navigate("/login", {
+        replace: true,
+        state: {
+          notice: "Account created successfully. Please login."
+        }
+      });
     } catch (error) {
       setMessage(error.response?.data?.message || error.message || "Failed to register");
     } finally {
@@ -53,13 +59,21 @@ const RegisterPage = () => {
           </div>
           <div className="field">
             <label>Password</label>
-            <input
-              type="password"
-              minLength={6}
-              value={form.password}
-              onChange={(event) => setForm({ ...form, password: event.target.value })}
-              required
-            />
+            <div className="password-control">
+              <input
+                type={showPassword ? "text" : "password"}
+                minLength={6}
+                value={form.password}
+                onChange={(event) => setForm({ ...form, password: event.target.value })}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((current) => !current)}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
           <label className="checkbox-row">
             <input

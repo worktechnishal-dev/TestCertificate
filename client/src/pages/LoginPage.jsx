@@ -9,6 +9,7 @@ const LoginPage = () => {
   const [form, setForm] = useState({ email: "", password: "", remember: true });
   const [message, setMessage] = useState("");
   const [saving, setSaving] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
   const destination = location.state?.from?.pathname || "/";
 
   if (user) {
@@ -35,6 +36,7 @@ const LoginPage = () => {
       <section className="auth-panel">
         <p className="eyebrow">Certificate Suite</p>
         <h1>Login</h1>
+        {location.state?.notice && <p className="success-text">{location.state.notice}</p>}
         <form className="auth-form" onSubmit={handleSubmit}>
           <div className="field">
             <label>Email</label>
@@ -47,12 +49,20 @@ const LoginPage = () => {
           </div>
           <div className="field">
             <label>Password</label>
-            <input
-              type="password"
-              value={form.password}
-              onChange={(event) => setForm({ ...form, password: event.target.value })}
-              required
-            />
+            <div className="password-control">
+              <input
+                type={showPassword ? "text" : "password"}
+                value={form.password}
+                onChange={(event) => setForm({ ...form, password: event.target.value })}
+                required
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword((current) => !current)}
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
           </div>
           <label className="checkbox-row">
             <input
