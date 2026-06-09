@@ -3,7 +3,9 @@ const cors = require("cors");
 const express = require("express");
 const path = require("path");
 const connectDb = require("./config/db");
+const authMiddleware = require("./middleware/authMiddleware");
 
+const authRoutes = require("./routes/authRoutes");
 const customerRoutes = require("./routes/customerRoutes");
 const productRoutes = require("./routes/productRoutes");
 const certificateRoutes = require("./routes/certificateRoutes");
@@ -35,9 +37,10 @@ app.get("/api/health", (req, res) => {
   res.json({ status: "ok" });
 });
 
-app.use("/api/customers", customerRoutes);
-app.use("/api/products", productRoutes);
-app.use("/api/certificates", certificateRoutes);
+app.use("/api/auth", authRoutes);
+app.use("/api/customers", authMiddleware, customerRoutes);
+app.use("/api/products", authMiddleware, productRoutes);
+app.use("/api/certificates", authMiddleware, certificateRoutes);
 
 const clientDistPath = path.join(__dirname, "..", "client", "dist");
 

@@ -11,3 +11,5 @@ services:
         value: MTC
       - key: MONGO_URI
         sync: false
+      - key: AUTH_SECRET
+        sync: false

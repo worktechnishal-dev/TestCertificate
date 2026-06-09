@@ -88,6 +88,7 @@ Set these environment variables:
 NODE_ENV=production
 MONGO_URI=<your MongoDB Atlas connection string>
 TC_PREFIX=MTC
+AUTH_SECRET=<long random secret for login sessions>
 ```
 
 Do not add local `.env` files to GitHub. Use the hosting provider's environment variable screen instead.
